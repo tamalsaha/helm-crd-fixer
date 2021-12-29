@@ -4,6 +4,9 @@ metadata:
   name: {{ include "kubedb-crd-installer.fullname" . }}
   labels:
     {{- include "kubedb-crd-installer.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
+    # "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

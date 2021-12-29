@@ -7,7 +7,7 @@ metadata:
     {{- include "kubedb-crd-installer.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": pre-install,pre-install,pre-rollback
-    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+    # "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
 spec:
   backoffLimit: 3
   activeDeadlineSeconds: 120
