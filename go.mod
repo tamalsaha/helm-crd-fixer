@@ -7,7 +7,7 @@ require (
 	k8s.io/klog/v2 v2.8.0
 	kmodules.xyz/client-go v0.0.0-20211119042047-bbc619ee4c49
 	kmodules.xyz/custom-resources v0.0.0-20211221073415-ab9b13cfc659
-	kubedb.dev/apimachinery v0.24.0
+	kubedb.dev/apimachinery v0.23.0
 	sigs.k8s.io/controller-runtime v0.9.0
 )
 
@@ -57,7 +57,6 @@ require (
 	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
 	golang.org/x/text v0.3.6 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
-	golang.org/x/tools v0.1.1-0.20210427153610-6397a11608ad // indirect
 	gomodules.xyz/jsonpatch/v2 v2.2.0 // indirect
 	gomodules.xyz/mergo v0.3.13-0.20210702100041-9d62ff8ece4d // indirect
 	gomodules.xyz/pointer v0.1.0 // indirect

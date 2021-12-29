@@ -170,8 +170,6 @@ golang.org/x/text/width
 # golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac
 ## explicit
 golang.org/x/time/rate
-# golang.org/x/tools v0.1.1-0.20210427153610-6397a11608ad
-## explicit; go 1.12
 # gomodules.xyz/jsonpatch/v2 v2.2.0
 ## explicit; go 1.12
 gomodules.xyz/jsonpatch/v2
@@ -493,8 +491,8 @@ kmodules.xyz/monitoring-agent-api/api/v1
 # kmodules.xyz/offshoot-api v0.0.0-20211103060642-3e217667cf41
 ## explicit; go 1.15
 kmodules.xyz/offshoot-api/api/v1
-# kubedb.dev/apimachinery v0.24.0
-## explicit; go 1.17
+# kubedb.dev/apimachinery v0.23.0
+## explicit; go 1.16
 kubedb.dev/apimachinery/apis
 kubedb.dev/apimachinery/apis/catalog
 kubedb.dev/apimachinery/apis/catalog/v1alpha1
