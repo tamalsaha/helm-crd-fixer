@@ -13,3 +13,9 @@ rules:
   resources:
   - customresourcedefinitions
   verbs: ["*"]
+- apiGroups:
+  - kubedb.com
+  - catalog.kubedb.com
+  resources:
+  - "*"
+  verbs: ["*"]
