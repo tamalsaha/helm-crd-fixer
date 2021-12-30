@@ -20,14 +20,4 @@ rules:
   resources:
   - "*"
   verbs: ["get", "list"]
-- apiGroups:
-  - ""
-  resources:
-  - serviceaccounts
-  verbs: ["delete"]
-- apiGroups:
-  - rbac.authorization.k8s.io
-  resources:
-  - clusterroles
-  - clusterrolebindings
-  verbs: ["delete"]
+
