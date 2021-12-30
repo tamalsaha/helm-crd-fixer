@@ -24,10 +24,10 @@ rules:
   - ""
   resources:
   - serviceaccounts
-  verbs: ["delete", "deletecollection"]
+  verbs: ["delete"]
 - apiGroups:
   - rbac.authorization.k8s.io
   resources:
   - clusterroles
   - clusterrolebindings
-  verbs: ["delete", "deletecollection"]
+  verbs: ["delete"]

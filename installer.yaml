@@ -43,6 +43,17 @@ rules:
   resources:
   - "*"
   verbs: ["get", "list"]
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs: ["delete"]
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterroles
+  - clusterrolebindings
+  verbs: ["delete"]
 ---
 # Source: kubedb-crd-installer/templates/cluster-role-binding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -89,19 +100,20 @@ spec:
   template:
     spec:
       serviceAccountName: kubedb-crd-installer
-      initContainers:
+      containers:
       - name: installer
         image: tigerworks/helm-crd-fixer:latest
         imagePullPolicy: Always
-      containers:
-      - name: cleaner
-        image: appscode/kubectl:1.22
-        command:
-          - sh
-          - -c
-          - "sleep 2; \
-             kubectl delete clusterrole kubedb-crd-installer || true; \
-             kubectl delete clusterrolebinding kubedb-crd-installer || true; \
-             kubectl delete serviceaccount kubedb-crd-installer || true;"
-        imagePullPolicy: Always
+      # containers:
+      # - name: cleaner
+      #   image: appscode/kubectl:1.22
+      #   command:
+      #     - sh
+      #     - -c
+      #     - "sleep 2; \
+      #        kubectl delete clusterrole kubedb-crd-installer || true; \
+      #        kubectl delete clusterrolebinding kubedb-crd-installer || true; \
+      #        sleep 2; \
+      #        kubectl delete serviceaccount kubedb-crd-installer || true;"
+      #   imagePullPolicy: Always
       restartPolicy: Never
