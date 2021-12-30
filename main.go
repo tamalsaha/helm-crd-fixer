@@ -43,7 +43,7 @@ func EnsureCustomResourceDefinitions(crdClient crd_cs.Interface) error {
 		dbapi.Postgres{}.CustomResourceDefinition(),
 		dbapi.ProxySQL{}.CustomResourceDefinition(),
 		dbapi.Redis{}.CustomResourceDefinition(),
-		dbapi.RedisSentinel{}.CustomResourceDefinition(),
+		// dbapi.RedisSentinel{}.CustomResourceDefinition(),
 
 		catalogapi.ElasticsearchVersion{}.CustomResourceDefinition(),
 		catalogapi.EtcdVersion{}.CustomResourceDefinition(),

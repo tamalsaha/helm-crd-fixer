@@ -6,8 +6,8 @@ require (
 	k8s.io/apiextensions-apiserver v0.21.1
 	k8s.io/klog/v2 v2.8.0
 	kmodules.xyz/client-go v0.0.0-20211013093146-1fbfd52e78c9
-	kmodules.xyz/custom-resources v0.0.0-20210824055127-e5a3d2d6c161
-	kubedb.dev/apimachinery v0.22.0
+	kmodules.xyz/custom-resources v0.0.0-20210618003440-c6bb400da153
+	kubedb.dev/apimachinery v0.19.0
 	sigs.k8s.io/controller-runtime v0.9.0
 )
 

@@ -95,21 +95,6 @@ message ConnectionPoolConfig {
   optional string ignoreStartupParameters = 14;
 }
 
-// CoordinatorSpec defines attributes of the coordinator container
-message CoordinatorSpec {
-  // Compute Resources required by coordinator container.
-  // Cannot be updated.
-  // More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-  // +optional
-  optional k8s.io.api.core.v1.ResourceRequirements resources = 1;
-
-  // Security options the coordinator container should run with.
-  // More info: https://kubernetes.io/docs/concepts/policy/security-context/
-  // More info: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-  // +optional
-  optional k8s.io.api.core.v1.SecurityContext securityContext = 2;
-}
-
 message Databases {
   // Alias to uniquely identify a target database running inside a specific Postgres instance.
   optional string alias = 1;
@@ -238,7 +223,7 @@ message ElasticsearchSpec {
   // Elasticsearch topology for node specification
   optional ElasticsearchClusterTopology topology = 3;
 
-  // To enable ssl for http layer
+  // To enable ssl in transport & http layer
   optional bool enableSSL = 4;
 
   // disable security of authPlugin (ie, xpack or searchguard). It disables authentication security of user.
@@ -266,37 +251,24 @@ message ElasticsearchSpec {
   // If specified, this file will be used as configuration file otherwise default configuration file will be used.
   optional k8s.io.api.core.v1.LocalObjectReference configSecret = 11;
 
-  // SecureConfigSecret is an optional field to provide secure settings for database.
-  // 	- Ref: https://www.elastic.co/guide/en/elasticsearch/reference/7.14/secure-settings.html
-  // Secure settings are store at "ES_CONFIG_DIR/elasticsearch.keystore" file (contents are encoded with password),
-  // once the keystore created.
-  // Expects a k8s secret name with data format:
-  // 	data:
-  // 		key: value
-  // 		password: KEYSTORE_PASSWORD
-  // 		s3.client.default.access_key: ACCESS_KEY
-  // 		s3.client.default.secret_key: SECRET_KEY
-  // +optional
-  optional k8s.io.api.core.v1.LocalObjectReference secureConfigSecret = 12;
-
   // PodTemplate is an optional configuration for pods used to expose database
   // +optional
-  optional kmodules.xyz.offshoot_api.api.v1.PodTemplateSpec podTemplate = 13;
+  optional kmodules.xyz.offshoot_api.api.v1.PodTemplateSpec podTemplate = 12;
 
   // ServiceTemplates is an optional configuration for services used to expose database
   // +optional
-  repeated NamedServiceTemplateSpec serviceTemplates = 14;
+  repeated NamedServiceTemplateSpec serviceTemplates = 13;
 
   // An eviction is allowed if at most "maxUnavailable" pods selected by
   // "selector" are unavailable after the eviction, i.e. even in absence of
   // the evicted pod. For example, one can prevent all voluntary evictions
   // by specifying 0. This is a mutually exclusive setting with "minAvailable".
   // +optional
-  optional k8s.io.apimachinery.pkg.util.intstr.IntOrString maxUnavailable = 15;
+  optional k8s.io.apimachinery.pkg.util.intstr.IntOrString maxUnavailable = 14;
 
   // TLS contains tls configurations
   // +optional
-  optional kmodules.xyz.client_go.api.v1.TLSConfig tls = 16;
+  optional kmodules.xyz.client_go.api.v1.TLSConfig tls = 15;
 
   // InternalUsers contains internal user configurations.
   // Expected Input format:
@@ -306,7 +278,7 @@ message ElasticsearchSpec {
   //   <username2>:
   // 		...
   // +optional
-  map<string, ElasticsearchUserSpec> internalUsers = 17;
+  map<string, ElasticsearchUserSpec> internalUsers = 16;
 
   // RolesMapping contains roles mapping configurations.
   // Expected Input format:
@@ -316,19 +288,19 @@ message ElasticsearchSpec {
   //   <role2>:
   // 		...
   // +optional
-  map<string, ElasticsearchRoleMapSpec> rolesMapping = 18;
+  map<string, ElasticsearchRoleMapSpec> rolesMapping = 17;
 
   // Indicates that the database is halted and all offshoot Kubernetes resources except PVCs are deleted.
   // +optional
-  optional bool halted = 19;
+  optional bool halted = 18;
 
   // TerminationPolicy controls the delete operation for database
   // +optional
-  optional string terminationPolicy = 20;
+  optional string terminationPolicy = 19;
 
   // KernelSettings contains the additional kernel settings.
   // +optional
-  optional KernelSettings kernelSettings = 21;
+  optional KernelSettings kernelSettings = 20;
 }
 
 message ElasticsearchStatus {
@@ -568,10 +540,6 @@ message MariaDBSpec {
   // TerminationPolicy controls the delete operation for database
   // +optional
   optional string terminationPolicy = 14;
-
-  // Coordinator defines attributes of the coordinator container
-  // +optional
-  optional CoordinatorSpec coordinator = 15;
 }
 
 message MariaDBStatus {
@@ -839,10 +807,6 @@ message MongoDBSpec {
   // StorageEngine can be wiredTiger (default) or inMemory
   // See available StorageEngine: https://docs.mongodb.com/manual/core/storage-engines/
   optional string storageEngine = 19;
-
-  // Coordinator defines attributes of the coordinator container
-  // +optional
-  optional CoordinatorSpec coordinator = 20;
 }
 
 message MongoDBStatus {
@@ -963,10 +927,6 @@ message MySQLSpec {
   // +optional
   // +default="DNS"
   optional string useAddressType = 17;
-
-  // Coordinator defines attributes of the coordinator container
-  // +optional
-  optional CoordinatorSpec coordinator = 18;
 }
 
 message MySQLStatus {
@@ -1291,10 +1251,6 @@ message PostgresSpec {
   // TerminationPolicy controls the delete operation for database
   // +optional
   optional string terminationPolicy = 18;
-
-  // Coordinator defines attributes of the coordinator container
-  // +optional
-  optional CoordinatorSpec coordinator = 19;
 }
 
 message PostgresStatus {
@@ -1441,91 +1397,6 @@ message RedisList {
   repeated Redis items = 2;
 }
 
-// +kubebuilder:object:root=true
-// +kubebuilder:resource:path=redissentinels,singular=redissentinel,shortName=rdsentinel,categories={datastore,kubedb,appscode,all}
-// +kubebuilder:subresource:status
-// +kubebuilder:printcolumn:name="Version",type="string",JSONPath=".spec.version"
-// +kubebuilder:printcolumn:name="Status",type="string",JSONPath=".status.phase"
-// +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
-message RedisSentinel {
-  optional k8s.io.apimachinery.pkg.apis.meta.v1.ObjectMeta metadata = 1;
-
-  optional RedisSentinelSpec spec = 2;
-
-  optional RedisSentinelStatus status = 3;
-}
-
-message RedisSentinelList {
-  optional k8s.io.apimachinery.pkg.apis.meta.v1.ListMeta metadata = 1;
-
-  // Items is a list of RedisSentinel TPR objects
-  repeated RedisSentinel items = 2;
-}
-
-message RedisSentinelRef {
-  // Name of the refereed sentinel
-  optional string name = 1;
-
-  // Namespace where refereed sentinel has been deployed
-  optional string namespace = 2;
-}
-
-message RedisSentinelSpec {
-  // Version of Postgres to be deployed.
-  optional string version = 1;
-
-  // Number of instances to deploy for a Redis Sentinel.
-  optional int32 replicas = 2;
-
-  // PodTemplate is an optional configuration for pods used to expose database
-  // +optional
-  optional kmodules.xyz.offshoot_api.api.v1.PodTemplateSpec podTemplate = 3;
-
-  // ServiceTemplates is an optional configuration for services used to expose database
-  // +optional
-  repeated NamedServiceTemplateSpec serviceTemplates = 4;
-
-  // TLS contains tls configurations for client and server.
-  // +optional
-  optional kmodules.xyz.client_go.api.v1.TLSConfig tls = 5;
-
-  // StorageType can be durable (default) or ephemeral
-  optional string storageType = 6;
-
-  // Storage spec to specify how storage shall be used.
-  optional k8s.io.api.core.v1.PersistentVolumeClaimSpec storage = 7;
-
-  // Database authentication secret
-  optional k8s.io.api.core.v1.LocalObjectReference authSecret = 8;
-
-  // Indicates that the database is halted and all offshoot Kubernetes resources except PVCs are deleted.
-  // +optional
-  optional bool halted = 9;
-
-  // Monitor is used monitor database instance
-  // +optional
-  optional kmodules.xyz.monitoring_agent_api.api.v1.AgentSpec monitor = 11;
-
-  // TerminationPolicy controls the delete operation for database
-  // +optional
-  optional string terminationPolicy = 10;
-}
-
-message RedisSentinelStatus {
-  // Specifies the current phase of the database
-  // +optional
-  optional string phase = 1;
-
-  // observedGeneration is the most recent generation observed for this resource. It corresponds to the
-  // resource's generation, which is updated on mutation by the API Server.
-  // +optional
-  optional int64 observedGeneration = 2;
-
-  // Conditions applied to the database, such as approval or denial.
-  // +optional
-  repeated kmodules.xyz.client_go.api.v1.Condition conditions = 3;
-}
-
 message RedisSpec {
   // Version of Redis to be deployed.
   optional string version = 1;
@@ -1537,55 +1408,49 @@ message RedisSpec {
   // start in cluster mode
   optional string mode = 3;
 
-  optional RedisSentinelRef sentinelRef = 4;
-
   // Redis cluster configuration for running redis servers in cluster mode. Required if Mode is set to "Cluster"
-  optional RedisClusterSpec cluster = 5;
+  optional RedisClusterSpec cluster = 4;
 
   // StorageType can be durable (default) or ephemeral
-  optional string storageType = 6;
+  optional string storageType = 5;
 
   // Storage spec to specify how storage shall be used.
-  optional k8s.io.api.core.v1.PersistentVolumeClaimSpec storage = 7;
+  optional k8s.io.api.core.v1.PersistentVolumeClaimSpec storage = 6;
 
   // Database authentication secret
-  optional k8s.io.api.core.v1.LocalObjectReference authSecret = 8;
+  optional k8s.io.api.core.v1.LocalObjectReference authSecret = 7;
 
   // Init is used to initialize database
   // +optional
-  optional InitSpec init = 9;
+  optional InitSpec init = 8;
 
   // Monitor is used monitor database instance
   // +optional
-  optional kmodules.xyz.monitoring_agent_api.api.v1.AgentSpec monitor = 10;
+  optional kmodules.xyz.monitoring_agent_api.api.v1.AgentSpec monitor = 9;
 
   // ConfigSecret is an optional field to provide custom configuration file for database (i.e redis.conf).
   // If specified, this file will be used as configuration file otherwise default configuration file will be used.
-  optional k8s.io.api.core.v1.LocalObjectReference configSecret = 11;
+  optional k8s.io.api.core.v1.LocalObjectReference configSecret = 10;
 
   // PodTemplate is an optional configuration for pods used to expose database
   // +optional
-  optional kmodules.xyz.offshoot_api.api.v1.PodTemplateSpec podTemplate = 12;
+  optional kmodules.xyz.offshoot_api.api.v1.PodTemplateSpec podTemplate = 11;
 
   // ServiceTemplates is an optional configuration for services used to expose database
   // +optional
-  repeated NamedServiceTemplateSpec serviceTemplates = 13;
+  repeated NamedServiceTemplateSpec serviceTemplates = 12;
 
   // TLS contains tls configurations for client and server.
   // +optional
-  optional kmodules.xyz.client_go.api.v1.TLSConfig tls = 14;
+  optional kmodules.xyz.client_go.api.v1.TLSConfig tls = 13;
 
   // Indicates that the database is halted and all offshoot Kubernetes resources except PVCs are deleted.
   // +optional
-  optional bool halted = 15;
+  optional bool halted = 14;
 
   // TerminationPolicy controls the delete operation for database
   // +optional
-  optional string terminationPolicy = 16;
-
-  // Coordinator defines attributes of the coordinator container
-  // +optional
-  optional CoordinatorSpec coordinator = 17;
+  optional string terminationPolicy = 15;
 }
 
 message RedisStatus {

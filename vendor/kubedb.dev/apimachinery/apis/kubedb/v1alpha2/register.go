@@ -76,8 +76,6 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		&ProxySQLList{},
 		&Redis{},
 		&RedisList{},
-		&RedisSentinel{},
-		&RedisSentinelList{},
 	)
 
 	scheme.AddKnownTypes(SchemeGroupVersion,
