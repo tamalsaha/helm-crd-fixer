@@ -17,7 +17,7 @@ spec:
       serviceAccountName: {{ include "kubedb-crd-installer.serviceAccountName" . }}
       containers:
       - name: installer
-        image: tigerworks/helm-crd-fixer:v0.24.0
+        image: tigerworks/helm-crd-fixer:v0.22.0
         imagePullPolicy: Always
       # containers:
       # - name: cleaner
