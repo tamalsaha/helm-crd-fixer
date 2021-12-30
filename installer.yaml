@@ -1,0 +1,96 @@
+
+---
+# Source: kubedb-crd-installer/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubedb-crd-installer
+  namespace: default
+  labels:
+    helm.sh/chart: kubedb-crd-installer-0.1.0
+    app.kubernetes.io/name: kubedb-crd-installer
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": pre-install,pre-install,pre-rollback
+    # "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+---
+# Source: kubedb-crd-installer/templates/cluster-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubedb-crd-installer
+  labels:
+    helm.sh/chart: kubedb-crd-installer-0.1.0
+    app.kubernetes.io/name: kubedb-crd-installer
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": pre-install,pre-install,pre-rollback
+    # "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+rules:
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs: ["*"]
+- apiGroups:
+  - kubedb.com
+  - catalog.kubedb.com
+  - appcatalog.appscode.com
+  resources:
+  - "*"
+  verbs: ["get", "list"]
+---
+# Source: kubedb-crd-installer/templates/cluster-role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubedb-crd-installer
+  labels:
+    helm.sh/chart: kubedb-crd-installer-0.1.0
+    app.kubernetes.io/name: kubedb-crd-installer
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
+    # "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubedb-crd-installer
+subjects:
+- kind: ServiceAccount
+  name: kubedb-crd-installer
+  namespace: default
+---
+# Source: kubedb-crd-installer/templates/installer.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kubedb-crd-installer-installer
+  namespace: default
+  labels:
+    helm.sh/chart: kubedb-crd-installer-0.1.0
+    app.kubernetes.io/name: kubedb-crd-installer
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": pre-install,pre-install,pre-rollback
+    # "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+spec:
+  backoffLimit: 1
+  # activeDeadlineSeconds: 120
+  # ttlSecondsAfterFinished: 30
+  template:
+    spec:
+      serviceAccountName: kubedb-crd-installer
+      containers:
+      - name: installer
+        image: tigerworks/helm-crd-fixer:latest
+        imagePullPolicy: Always
+      restartPolicy: Never

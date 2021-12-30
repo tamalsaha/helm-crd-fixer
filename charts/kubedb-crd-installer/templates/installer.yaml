@@ -7,15 +7,27 @@ metadata:
     {{- include "kubedb-crd-installer.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": pre-install,pre-install,pre-rollback
-    # "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-failed
 spec:
   backoffLimit: 1
   # activeDeadlineSeconds: 120
-  # ttlSecondsAfterFinished: 30
+  ttlSecondsAfterFinished: 5
   template:
     spec:
       serviceAccountName: {{ include "kubedb-crd-installer.serviceAccountName" . }}
-      containers:
+      initContainers:
       - name: installer
         image: tigerworks/helm-crd-fixer:latest
         imagePullPolicy: Always
+      containers:
+      - name: cleaner
+        image: appscode/kubectl:1.23.0
+        command:
+          - sh
+          - -c
+          - "sleep 2; \
+             kubectl delete clusterrole {{ include "kubedb-crd-installer.fullname" . }} || true; \
+             kubectl delete clusterrolebinding {{ include "kubedb-crd-installer.fullname" . }} || true; \
+             kubectl delete serviceaccount {{ include "kubedb-crd-installer.serviceAccountName" . }} || true;"
+        imagePullPolicy: {{ .Values.imagePullPolicy  }}
+      restartPolicy: Never
