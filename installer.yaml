@@ -14,7 +14,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
   annotations:
     "helm.sh/hook": pre-install,pre-install,pre-rollback
-    # "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-failed
 ---
 # Source: kubedb-crd-installer/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -29,7 +29,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
   annotations:
     "helm.sh/hook": pre-install,pre-install,pre-rollback
-    # "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-failed
 rules:
 - apiGroups:
   - apiextensions.k8s.io
@@ -57,7 +57,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
-    # "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-failed
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -81,16 +81,27 @@ metadata:
     app.kubernetes.io/managed-by: Helm
   annotations:
     "helm.sh/hook": pre-install,pre-install,pre-rollback
-    # "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-failed
 spec:
   backoffLimit: 1
-  # activeDeadlineSeconds: 120
-  # ttlSecondsAfterFinished: 30
+  activeDeadlineSeconds: 300
+  ttlSecondsAfterFinished: 10
   template:
     spec:
       serviceAccountName: kubedb-crd-installer
-      containers:
+      initContainers:
       - name: installer
         image: tigerworks/helm-crd-fixer:latest
+        imagePullPolicy: Always
+      containers:
+      - name: cleaner
+        image: appscode/kubectl:1.22
+        command:
+          - sh
+          - -c
+          - "sleep 2; \
+             kubectl delete clusterrole kubedb-crd-installer || true; \
+             kubectl delete clusterrolebinding kubedb-crd-installer || true; \
+             kubectl delete serviceaccount kubedb-crd-installer || true;"
         imagePullPolicy: Always
       restartPolicy: Never

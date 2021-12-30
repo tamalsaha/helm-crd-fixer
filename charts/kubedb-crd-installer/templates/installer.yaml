@@ -10,8 +10,8 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-failed
 spec:
   backoffLimit: 1
-  # activeDeadlineSeconds: 120
-  ttlSecondsAfterFinished: 5
+  activeDeadlineSeconds: 300
+  ttlSecondsAfterFinished: 10
   template:
     spec:
       serviceAccountName: {{ include "kubedb-crd-installer.serviceAccountName" . }}
@@ -21,7 +21,7 @@ spec:
         imagePullPolicy: Always
       containers:
       - name: cleaner
-        image: appscode/kubectl:1.23.0
+        image: appscode/kubectl:1.22
         command:
           - sh
           - -c
@@ -29,5 +29,5 @@ spec:
              kubectl delete clusterrole {{ include "kubedb-crd-installer.fullname" . }} || true; \
              kubectl delete clusterrolebinding {{ include "kubedb-crd-installer.fullname" . }} || true; \
              kubectl delete serviceaccount {{ include "kubedb-crd-installer.serviceAccountName" . }} || true;"
-        imagePullPolicy: {{ .Values.imagePullPolicy  }}
+        imagePullPolicy: Always
       restartPolicy: Never
