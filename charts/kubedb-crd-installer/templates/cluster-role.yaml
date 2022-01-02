@@ -13,11 +13,11 @@ rules:
   resources:
   - customresourcedefinitions
   verbs: ["*"]
-- apiGroups:
-  - kubedb.com
-  - catalog.kubedb.com
-  - appcatalog.appscode.com
-  resources:
-  - "*"
-  verbs: ["get", "list"]
+# - apiGroups:
+#   - kubedb.com
+#   - catalog.kubedb.com
+#   - appcatalog.appscode.com
+#   resources:
+#   - "*"
+#   verbs: ["get", "list"]
 
