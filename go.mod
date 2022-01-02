@@ -5,7 +5,7 @@ go 1.17
 require (
 	k8s.io/apiextensions-apiserver v0.21.1
 	k8s.io/klog/v2 v2.8.0
-	kmodules.xyz/client-go v0.0.0-20220102044733-a127be8faaba
+	kmodules.xyz/client-go v0.0.0-20220102045752-1e092396de37
 	kmodules.xyz/custom-resources v0.0.0-20211007080833-72bd9e8cae6e
 	kubedb.dev/apimachinery v0.24.0
 	sigs.k8s.io/controller-runtime v0.9.0

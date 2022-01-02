@@ -26,7 +26,6 @@ import (
 
 	"github.com/pkg/errors"
 	crdv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
-	crdv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	crd_cs "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	kerr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -64,57 +63,6 @@ func RegisterCRDs(client crd_cs.Interface, crds []*CustomResourceDefinition) err
 		}
 	}
 	return WaitForCRDReady(client, crds)
-}
-
-func removeDefaults(schema *crdv1beta1.JSONSchemaProps) {
-	if schema == nil {
-		return
-	}
-
-	schema.Default = nil
-
-	if schema.Items != nil {
-		removeDefaults(schema.Items.Schema)
-
-		for idx := range schema.Items.JSONSchemas {
-			removeDefaults(&schema.Items.JSONSchemas[idx])
-		}
-	}
-
-	for idx := range schema.AllOf {
-		removeDefaults(&schema.AllOf[idx])
-	}
-	for idx := range schema.OneOf {
-		removeDefaults(&schema.OneOf[idx])
-	}
-	for idx := range schema.AnyOf {
-		removeDefaults(&schema.AnyOf[idx])
-	}
-	if schema.Not != nil {
-		removeDefaults(schema.Not)
-	}
-	for key, prop := range schema.Properties {
-		removeDefaults(&prop)
-		schema.Properties[key] = prop
-	}
-	if schema.AdditionalProperties != nil {
-		removeDefaults(schema.AdditionalProperties.Schema)
-	}
-	for key, prop := range schema.PatternProperties {
-		removeDefaults(&prop)
-		schema.PatternProperties[key] = prop
-	}
-	for key, prop := range schema.Dependencies {
-		removeDefaults(prop.Schema)
-		schema.Dependencies[key] = prop
-	}
-	if schema.AdditionalItems != nil {
-		removeDefaults(schema.AdditionalItems.Schema)
-	}
-	for key, prop := range schema.Definitions {
-		removeDefaults(&prop)
-		schema.Definitions[key] = prop
-	}
 }
 
 func WaitForCRDReady(client crd_cs.Interface, crds []*CustomResourceDefinition) error {
