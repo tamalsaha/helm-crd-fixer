@@ -105,7 +105,7 @@ func WaitForCRDReady(client crd_cs.Interface, crds []*CustomResourceDefinition) 
 				}
 			}
 		}
-		return false, nil
+		return true, nil
 	})
 	return errors.Wrap(err, "timed out waiting for CRD")
 }
