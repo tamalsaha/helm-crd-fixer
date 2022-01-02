@@ -95,8 +95,8 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-failed
 spec:
   backoffLimit: 3
-  activeDeadlineSeconds: 300
-  ttlSecondsAfterFinished: 10
+  # activeDeadlineSeconds: 300
+  # ttlSecondsAfterFinished: 10
   template:
     spec:
       serviceAccountName: kubedb-crd-installer
